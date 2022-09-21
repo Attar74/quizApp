@@ -17,7 +17,7 @@ body {
 }
 .questions-ctr {
   position: relative;
-  width: 100%;
+  min-width: 100%;
 }
 .question {
   width: 100%;

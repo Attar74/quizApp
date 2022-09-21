@@ -1,27 +1,37 @@
 <template>
-  <div class="ctr">
-
-    <!--Questions Component-->
-    <transition-group name="fade" mode="out-in">
-      <v-skeleton-loader
-        v-bind="attrs"
-        type="date-picker"
-      ></v-skeleton-loader>
-      <Questions v-if='stilInQuestionPhase' 
-        :questions='questions' 
-        :questionsAnswered='questionsAnswered'       
-        @question-answered="questionAnswered($event)"
-      />
+  <div>
+    <div class="ctr d-flex height-80 align-center">
+      <div class='mx-auto' v-if="isPageLoading">
+        <v-progress-circular
+          v-if="isPageLoading"
+          indeterminate
+          :size="70"
+          :width="7"
+          color="#00ca8c"
+          class="mx-auto"
+        ></v-progress-circular>   
+      </div>   
+      <div v-else>
+        <!--Questions Component-->
+        <transition-group name="fade" mode="out-in">    
+          <Questions v-if='stilInQuestionPhase' 
+            :questions='questions' 
+            :questionsAnswered='questionsAnswered'       
+            @question-answered="questionAnswered($event)"
+          />
+        
+          <!--Results Component-->    
+          <Results v-else
+            :questionsLength='questions.length'
+            :totalCorrect="totalCorrect"
+          />
+        </transition-group> 
       
-      <!--Results Component-->    
-      <Results v-else 
-        :results="results"
-        :totalCorrect="totalCorrect"
-      />
-    </transition-group> 
-    
-    <!--Action Button-->
-    <button v-if='questionsAnswered>=questions.length' type="button" class="reset-btn" @click.prevent="resetQuestions">Reset</button>
+        <!--Action Button-->
+        <button v-if='questionsAnswered>=questions.length&&!isPageLoading' type="button" class="reset-btn" @click.prevent="resetQuestions">Reset</button>
+      </div>
+    </div>
+    <mainFooter />
   </div>
 </template>
 
@@ -30,28 +40,16 @@
 import {questionsService} from '@/services/questions.service.js'
 import Questions from './components/Questions.vue';
 import Results from './components/Results.vue';
+import mainFooter from './components/mainFooter.vue';
   export default {
     name: "App",
-    components: { Questions, Results },    
+    components: { Questions, Results, mainFooter },    
     data() {
       return {
+        isPageLoading: true,
         totalCorrect: 0,
         questionsAnswered: 0,
-        questions: [],
-        results: [
-          {
-              min: 0,
-              max: 2,
-              title: "Try again!",
-              desc: "Do a little more studying and you may succeed!"
-          },
-          {
-              min: 3,
-              max: 3,
-              title: "Wow, you're a genius!",
-              desc: "Studying has definitely paid off for you!"
-          }
-        ]
+        questions: []
       }
     },
     computed: {
@@ -91,6 +89,7 @@ import Results from './components/Results.vue';
               correct_answer: q.correct_answer
             }
             this.questions.push(question)
+            this.isPageLoading = false
           })
         } catch(error) {
           console.log(error)
@@ -119,4 +118,7 @@ import Results from './components/Results.vue';
 
 <style>
 @import url('./assets/main.css');
+.height-80{
+  height: 80vh;
+}
 </style>

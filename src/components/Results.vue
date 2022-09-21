@@ -2,11 +2,14 @@
   <div>
     <div class="result">        
         <div class="title">
-            {{results[resultIndex].title}}!
-            your results is {{totalCorrect}}!
+            {{getFinalText.title}}
+            You Have answered 
+            {{ totalCorrect }} 
+            questions correctly out of 
+            {{ questionsLength }}            
         </div>
         <div class="desc">
-            {{results[resultIndex].desc}}
+            {{getFinalText.desc}}
         </div>
     </div>
   </div>
@@ -15,8 +18,8 @@
 <script>
 export default {
     props: {
-        results: {
-            default: [],
+        questionsLength: {
+            default: 0,
             required: true
         },
         totalCorrect: {
@@ -27,17 +30,21 @@ export default {
     methods: {
         betweenRange(x, min, max) {
             return x >= min && x <= max
-        }
+        }        
     },
     computed: {
-        resultIndex() {
-            let index=0
-            this.results.map((result, i)=>{
-                if(this.betweenRange(this.totalCorrect,result.min,result.max)){
-                    index = i
-                }
-            })
-            return index
+        getTotalCorrectPercentage() {
+            return (this.totalCorrect/this.questionsLength)*100
+        },
+        getFinalText() {
+            if (this.getTotalCorrectPercentage < 60) return {
+                title: "Try again!",
+                desc: "Do a little more studying and you may succeed!"
+            }
+            else return {
+                title: "Wow, you're a genius!",
+                desc: "Studying has definitely paid off for you!"
+            }
         }
     }
 }
