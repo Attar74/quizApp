@@ -14,11 +14,12 @@
         <v-spacer></v-spacer>
         <div class="iconsHolder">          
           <v-icon 
-            v-for="icon in icons"
-            :key="icon" size="40px" color='#000' 
+            v-for="(link, i) in socialAdreses"
+            :key="i" size="40px" color='#000' 
             class="mx-4"
+            @click="routeToLink(link.route)"
           >
-            {{ icon }}
+            {{ link.icon }}
           </v-icon>
         </div>
       </v-card>
@@ -27,8 +28,11 @@
 </template>
 
 <script>
+  import socialAdreses from "../constants/index"
+
   export default {
     data: () => ({
+      ...socialAdreses,
       icons: [
         'mdi-facebook',
         'mdi-twitter',
@@ -36,6 +40,11 @@
         'mdi-github',
       ],
     }),
+    methods: {
+      routeToLink(route) {
+        window.open(route, '_blank')
+      }
+    }
   }
 </script>
 <style>
